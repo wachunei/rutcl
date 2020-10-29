@@ -5,6 +5,13 @@ import validate from "./lib/validate.ts";
 
 import { parse } from "./deps.ts";
 
+const methods: { [key: string]: Function } = {
+  clean,
+  "get-digit": getDigit,
+  format,
+  validate,
+};
+
 function logErrorMsg() {
   console.log("An error has ocurred ☄️");
 }
@@ -28,33 +35,13 @@ function cli(denoArgs: string[]): number {
   const argument = flags[functionName];
   const options = optionsNames.map((name) => flags[name]);
 
-  let result;
-  try {
-    switch (functionName) {
-      case "clean":
-        result = clean(argument);
-        break;
-      case "get-digit":
-        result = getDigit(argument);
-        break;
-      case "format":
-        result = format(argument);
-        break;
-      case "validate":
-        result = String(validate(argument));
-        break;
-      default:
-        result = "";
-        break;
-    }
-  } catch {
-    result = "";
-  }
+  if (!methods[functionName]) throw "TEST";
 
-  if (result) {
+  try {
+    const result = String(methods[functionName](argument));
     logResultMsg(functionName, argument, result);
     return 0;
-  } else {
+  } catch {
     logErrorMsg();
     return 1;
   }
