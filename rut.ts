@@ -2,7 +2,7 @@
 export type ValidateOptions = Record<string, unknown>;
 export type FormatOptions = Record<string, unknown>;
 
-/** cleans an rut into a string */
+/** cleans a rut into a string */
 export function clean(dirtyRut: string | number): string {
   const rutString = typeof dirtyRut === "number" ? String(dirtyRut) : dirtyRut;
   return rutString.replace(/^0+|[^0-9kK]+/g, "").toUpperCase();
