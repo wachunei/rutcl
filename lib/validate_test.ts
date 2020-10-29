@@ -33,7 +33,6 @@ Deno.test("validate retuns", () => {
   assert(validate("18.591.404-6"));
   assert(validate("24.225112-1"));
   assert(validate("10.980.661-7"));
-
   assert(!validate(Infinity));
   assert(!validate("18591404-5"));
   assert(!validate("24225112-K"));
