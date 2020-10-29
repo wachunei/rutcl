@@ -17,11 +17,12 @@ function logResultMsg(functionName: string, argument: string, result: string) {
   console.log(`${functionName}(${argument}) has returned ${result}`);
 }
 
-function cli(denoArgs: string[]) {
+function cli(denoArgs: string[]): number {
   if (denoArgs.length === 0) {
     logNoInputMsg();
-    return;
+    return 1;
   }
+
   const { _, ...flags } = parse(denoArgs, { "--": false });
   const [functionName, ...optionsNames] = Object.keys(flags);
   const argument = flags[functionName];
@@ -50,8 +51,13 @@ function cli(denoArgs: string[]) {
     result = "";
   }
 
-  if (result) logResultMsg(functionName, argument, result);
-  else logErrorMsg();
+  if (result) {
+    logResultMsg(functionName, argument, result);
+    return 0;
+  } else {
+    logErrorMsg();
+    return 1;
+  }
 }
 
 export default cli;

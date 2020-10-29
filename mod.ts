@@ -6,5 +6,5 @@ export { default as format } from "./lib/format.ts";
 import cli from "./cli.ts";
 
 if (import.meta.main) {
-  cli(Deno.args);
+  Deno.exit(cli(Deno.args));
 }
