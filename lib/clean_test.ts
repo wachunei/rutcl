@@ -1,5 +1,5 @@
-import { assertEquals } from "./test_deps.ts";
-import { clean } from "./rut.ts";
+import { assertEquals } from "../test_deps.ts";
+import clean from "./clean.ts";
 
 Deno.test("clean return expected", () => {
   assertEquals(clean(123456789), "123456789");
