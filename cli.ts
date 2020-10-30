@@ -5,6 +5,7 @@ import validate from "./lib/validate.ts";
 
 import { parse } from "./deps.ts";
 
+// deno-lint-ignore ban-types
 const methods: { [key: string]: Function } = {
   clean,
   "get-digit": getDigit,
@@ -12,8 +13,8 @@ const methods: { [key: string]: Function } = {
   validate,
 };
 
-function logErrorMsg() {
-  console.log("An error has ocurred ☄️");
+function logErrorMsg(message?: string) {
+  console.log(`${message || "An error has ocurred"} ☄️`);
 }
 
 function logNoInputMsg() {
@@ -35,7 +36,10 @@ function cli(denoArgs: string[]): number {
   const argument = flags[functionName];
   const options = optionsNames.map((name) => flags[name]);
 
-  if (!methods[functionName]) throw "TEST";
+  if (!methods[functionName]) {
+    logErrorMsg(`Error: function ${functionName} does not exist`);
+    return 1;
+  }
 
   try {
     const result = String(methods[functionName](argument));
