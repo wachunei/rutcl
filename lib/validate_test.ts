@@ -1,7 +1,7 @@
 import { assert } from "../test_deps.ts";
 import validate from "./validate.ts";
 
-Deno.test("validate retuns", () => {
+Deno.test("validate returns", () => {
   assert(validate("18591404-6"));
   assert(validate("24225112-1"));
   assert(validate("10980661-7"));
