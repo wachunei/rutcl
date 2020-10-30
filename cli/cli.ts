@@ -1,9 +1,9 @@
-import clean from "./lib/clean.ts";
-import getDigit from "./lib/getDigit.ts";
-import format from "./lib/format.ts";
-import validate from "./lib/validate.ts";
+import clean from "../lib/clean.ts";
+import getDigit from "../lib/getDigit.ts";
+import format from "../lib/format.ts";
+import validate from "../lib/validate.ts";
 
-import { parse } from "./deps.ts";
+import { parse } from "../deps.ts";
 
 // deno-lint-ignore ban-types
 const methods: { [key: string]: Function } = {
@@ -13,22 +13,24 @@ const methods: { [key: string]: Function } = {
   validate,
 };
 
+const log = import.meta.main ? console.log : () => {};
+
 function logErrorMsg(message?: string) {
-  console.log(`${message || "An error has ocurred"} ☄️`);
+  log(`${message || "An error has ocurred"} ☄️`);
 }
 
 function logNoInputMsg() {
-  console.log("Please enter a function 🦕");
+  log("Please enter a function 🦕");
 }
 
 function logResultMsg(functionName: string, argument: string, result: string) {
-  console.log(`${functionName}(${argument}) has returned ${result}`);
+  log(`${functionName}(${argument}) has returned ${result}`);
 }
 
 function cli(denoArgs: string[]): number {
   if (denoArgs.length === 0) {
     logNoInputMsg();
-    return 1;
+    return 2;
   }
 
   const { _, ...flags } = parse(denoArgs, { "--": false });
@@ -38,16 +40,17 @@ function cli(denoArgs: string[]): number {
 
   if (!methods[functionName]) {
     logErrorMsg(`Error: function ${functionName} does not exist`);
-    return 1;
+    return 2;
   }
 
   try {
-    const result = String(methods[functionName](argument));
+    const result = methods[functionName](argument);
+    const exitCode = typeof result === "boolean" ? Number(result) : 0;
     logResultMsg(functionName, argument, result);
-    return 0;
-  } catch {
-    logErrorMsg();
-    return 1;
+    return exitCode;
+  } catch (err) {
+    logErrorMsg(err);
+    return 2;
   }
 }
 
