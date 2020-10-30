@@ -1,12 +1,14 @@
-export type FormatOptions = Record<string, unknown>;
+import clean from "./clean.ts";
 
 /** formats a rut */
 function format(
   dirtyRut: string | number,
-  options: FormatOptions,
 ): string {
-  // TODO
-  return "1.234.456-K";
+  const cleanRut = clean(dirtyRut);
+
+  const verificationDigit = cleanRut.slice(-1);
+  const digits = cleanRut.slice(0, -1).split(/(?=(?:...)*$)/).join(".");
+  return `${digits}-${verificationDigit}`;
 }
 
 export default format;
