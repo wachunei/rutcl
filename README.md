@@ -1,10 +1,8 @@
 <h1 align="center">rutcl</h1>
-<h4 align="center">A set of chilean RUT utility functions for Deno<h4>
-<br>
+<h4 align="center">A set of chilean RUT utility functions for Deno</h4>
 <p align="center">
   <img src="https://github.com/wachunei/rutcl/workflows/ci/badge.svg" / alt="ci">
 </p>
-<br>
 
 ```ts
 import {
