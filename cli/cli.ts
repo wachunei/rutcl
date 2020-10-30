@@ -1,67 +1,85 @@
+import { parse } from "../deps.ts";
 import clean from "../lib/clean.ts";
 import getDigit from "../lib/getDigit.ts";
 import format from "../lib/format.ts";
-import validate from "../lib/validate.ts";
+import validate, { InvalidRUTException } from "../lib/validate.ts";
 
-import { parse } from "../deps.ts";
-
-type Flags = Record<string, boolean | string>;
-
-const booleanFlags = ["quiet"];
+let isQuiet = false;
 
 // deno-lint-ignore ban-types
 const methods: { [key: string]: Function } = {
   clean,
   "get-digit": getDigit,
+  "is-valid": validate,
   format,
   validate,
 };
 
-function logErrorMsg(message?: string) {
-  console.log(`${message || "An error has ocurred"} ☄️`);
+const ERROR: Record<string, string> = {
+  NO_FUNCTION: "Please enter a valid function 🦕",
+  NO_INPUT: "Please enter a valid function input 🦕",
+  GENERIC: "An error has ocurred ☄️",
+};
+
+const SUCCESS: Record<string, string> = {
+  VALID: "RUT is valid ✅",
+};
+
+const RESPONSE: Record<string, string> = {
+  "is-valid": SUCCESS.VALID,
+  validate: SUCCESS.VALID,
+};
+
+// deno-lint-ignore no-explicit-any
+function log(...args: any[]): void {
+  if (isQuiet) {
+    return;
+  }
+  console.log(...args);
 }
 
-function logNoInputMsg() {
-  console.log("Please enter a valid function 🦕");
-}
-
-function logResultMsg(functionName: string, argument: string, result: string) {
-  console.log(`${functionName}(${argument}) has returned ${result}`);
-}
-
-function areFlagsValid(flags: Flags) {
-  const keys = Object.keys(flags);
-  const emptyFlags = keys.filter((key: string) => {
-    return !booleanFlags.includes(key) && flags[key] === true;
-  });
-  return emptyFlags.length === 0 && keys.length !== 0;
+// deno-lint-ignore no-explicit-any
+function logError(message?: string, ...args: any[]): void {
+  if (isQuiet) {
+    return;
+  }
+  console.error(message, ...args);
 }
 
 function cli(denoArgs: string[]): number {
   const { _, quiet, ...flags } = parse(denoArgs, { "--": false });
+  const method = Object.keys(methods).find((method) => flags[method]);
 
-  if (!areFlagsValid(flags)) {
-    quiet || logNoInputMsg();
+  isQuiet = !!quiet;
+
+  if (!method) {
+    logError(ERROR.NO_FUNCTION);
     return 2;
   }
 
-  const [functionName, ...optionsNames] = Object.keys(flags);
-  const argument = flags[functionName];
-  const options = optionsNames.map((name) => flags[name]);
-
-  if (!methods[functionName]) {
-    quiet || logErrorMsg(`Error: function ${functionName} does not exist`);
+  if (flags[method] === true) {
+    logError(ERROR.NO_INPUT);
     return 2;
   }
+
+  // const options = { ...flags, [method]: undefined };
+  const argument = flags[method];
 
   try {
-    const result = methods[functionName](argument);
-    const exitCode = typeof result === "boolean" ? Number(result) : 0;
-    quiet || logResultMsg(functionName, argument, result);
-    return exitCode;
+    const result = methods[method](argument);
+    if (result) {
+      log(result);
+      return 0;
+    }
+
+    if (RESPONSE[method]) {
+      log(RESPONSE[method]);
+    }
+
+    return 0;
   } catch (err) {
-    quiet || logErrorMsg(err);
-    return 2;
+    logError(`${err.message}${err instanceof InvalidRUTException ? " ❌" : ""}`);
+    return 1;
   }
 }
 
