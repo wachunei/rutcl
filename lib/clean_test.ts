@@ -8,4 +8,5 @@ Deno.test("clean return expected", () => {
   assertEquals(clean("12*345*678*k"), "12345678K");
   assertEquals(clean("0012.345.678-9"), "123456789");
   assertEquals(clean("0000012345678K"), "12345678K");
+  assertEquals(clean("000.012.345.678-9"), "123456789");
 });
