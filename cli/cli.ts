@@ -5,6 +5,10 @@ import validate from "../lib/validate.ts";
 
 import { parse } from "../deps.ts";
 
+type Flags = Record<string, boolean | string>;
+
+const booleanFlags = ["quiet"];
+
 // deno-lint-ignore ban-types
 const methods: { [key: string]: Function } = {
   clean,
@@ -13,43 +17,50 @@ const methods: { [key: string]: Function } = {
   validate,
 };
 
-const log = import.meta.main ? console.log : () => {};
-
 function logErrorMsg(message?: string) {
-  log(`${message || "An error has ocurred"} ☄️`);
+  console.log(`${message || "An error has ocurred"} ☄️`);
 }
 
 function logNoInputMsg() {
-  log("Please enter a function 🦕");
+  console.log("Please enter a valid function 🦕");
 }
 
 function logResultMsg(functionName: string, argument: string, result: string) {
-  log(`${functionName}(${argument}) has returned ${result}`);
+  console.log(`${functionName}(${argument}) has returned ${result}`);
+}
+
+function areFlagsValid(flags: Flags) {
+  const keys = Object.keys(flags);
+  const emptyFlags = keys.filter((key: string) => {
+    return !booleanFlags.includes(key) && flags[key] === true;
+  });
+  return emptyFlags.length === 0 && keys.length !== 0;
 }
 
 function cli(denoArgs: string[]): number {
-  if (denoArgs.length === 0) {
-    logNoInputMsg();
+  const { _, quiet, ...flags } = parse(denoArgs, { "--": false });
+
+  if (!areFlagsValid(flags)) {
+    quiet || logNoInputMsg();
     return 2;
   }
 
-  const { _, ...flags } = parse(denoArgs, { "--": false });
   const [functionName, ...optionsNames] = Object.keys(flags);
   const argument = flags[functionName];
   const options = optionsNames.map((name) => flags[name]);
 
   if (!methods[functionName]) {
-    logErrorMsg(`Error: function ${functionName} does not exist`);
+    quiet || logErrorMsg(`Error: function ${functionName} does not exist`);
     return 2;
   }
 
   try {
     const result = methods[functionName](argument);
     const exitCode = typeof result === "boolean" ? Number(result) : 0;
-    logResultMsg(functionName, argument, result);
+    quiet || logResultMsg(functionName, argument, result);
     return exitCode;
   } catch (err) {
-    logErrorMsg(err);
+    quiet || logErrorMsg(err);
     return 2;
   }
 }
