@@ -60,6 +60,7 @@ Returns a boolean, `true` if RUT is valid, `false` otherwise.
 import isValid from "https://deno.land/x/rutcl/lib/isValid.ts";
 
 isValid(123456789); // => false
+isValid("18591404-6"); // => true
 ```
 
 <a name="functions-validate"></a>
@@ -72,6 +73,7 @@ Throws an `InvalidRUTException` if RUT is not valid.
 import validate from "https://deno.land/x/rutcl/lib/validate.ts";
 
 validate(123456789); // => Throws InvalidRUTException
+validate("18591404-6"); // => undefined
 ```
 
 <a name="functions-getdigit"></a>
@@ -83,7 +85,7 @@ Returns a valid verification digit for given partial RUT
 ```ts
 import getDigit from "https://deno.land/x/rutcl/lib/getDigit.ts";
 
-getDigit("12345678"); // => "5"
+getDigit("18591404"); // => "6"
 ```
 
 <a name="functions-format"></a>
@@ -95,7 +97,7 @@ Returns a formatted RUT
 ```ts
 import format from "https://deno.land/x/rutcl/lib/format.ts";
 
-format("123456785"); // => "17.702.835-5"
+format("185914046"); // => "18.591.404-6"
 ```
 
 <a name="functions-clean"></a>
@@ -107,7 +109,7 @@ Returns a clean RUT, only digits.
 ```ts
 import clean from "https://deno.land/x/rutcl/lib/clean.ts";
 
-clean("12.345.678-5"); // => "177028355"
+clean("0018*591.404*6"); // => "185914046"
 ```
 
 ## CLI
