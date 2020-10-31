@@ -14,4 +14,4 @@ jobs:
             - name: check linting
               run: deno lint --unstable
             - name: run tests
-              run: deno test
+              run: deno test --allow-run
