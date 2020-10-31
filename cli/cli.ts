@@ -32,18 +32,16 @@ const RESPONSE: Record<string, string> = {
 
 // deno-lint-ignore no-explicit-any
 function log(...args: any[]): void {
-  if (isQuiet) {
-    return;
+  if (!isQuiet) {
+    console.log(...args);
   }
-  console.log(...args);
 }
 
 // deno-lint-ignore no-explicit-any
 function logError(message?: string, ...args: any[]): void {
-  if (isQuiet) {
-    return;
+  if (!isQuiet) {
+    console.error(message, ...args);
   }
-  console.error(message, ...args);
 }
 
 function cli(denoArgs: string[]): number {
