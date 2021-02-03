@@ -7,12 +7,11 @@
 ```ts
 import {
   clean,
-  format
+  format,
   getDigit,
   isValid,
   validate,
 } from "https://deno.land/x/rutcl/mod.ts";
-
 
 try {
   validate("123456789");

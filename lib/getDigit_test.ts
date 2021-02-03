@@ -10,4 +10,5 @@ Deno.test("getDigit returns expected digit", () => {
   assertEquals(getDigit("16327681"), "K");
   assertEquals(getDigit(16327681), "K");
   assertEquals(getDigit("13_356_201"), "K");
+  assertEquals(getDigit("12328326"), "0");
 });
