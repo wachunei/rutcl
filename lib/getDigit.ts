@@ -8,7 +8,10 @@ function getDigit(dirtyPartialRut: string | number): string {
     0,
   );
   const digit = 11 - (sum % 11);
-  return digit === 10 ? "K" : String(digit);
+
+  if (digit === 11) return "0";
+  if (digit === 10) return "K";
+  return String(digit);
 }
 
 export default getDigit;
